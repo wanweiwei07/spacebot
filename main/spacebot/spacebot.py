@@ -295,12 +295,6 @@ if __name__=="__main__":
 
     # show in panda3d
     import spacebotplot
-    from direct.showbase.ShowBase import ShowBase
-    from panda3d.core import *
-    from panda3d.bullet import BulletSphereShape
-    import pandactrl.pandageom as pandageom
-    import pandactrl.pandactrl as pandactrl
-    from direct.filter.CommonFilters import CommonFilters
 
     base = pandactrl.World(camp = [10000,10000,10000], lookatp = [0,0,700])
 
