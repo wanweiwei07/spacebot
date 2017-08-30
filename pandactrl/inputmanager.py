@@ -1,7 +1,7 @@
 from direct.showbase.DirectObject import DirectObject
 from panda3d.core import *
 import numpy as np
-import pandaplotutils.pandageom as pg
+import pandageom as pg
 
 
 class InputManager(DirectObject):

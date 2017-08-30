@@ -2,8 +2,8 @@ from panda3d.core import *
 from direct.task import Task
 from direct.filter.CommonFilters import CommonFilters
 from direct.showbase.ShowBase import ShowBase
-import pandaplotutils.inputmanager as im
-import pandaplotutils.pandageom as pg
+import inputmanager as im
+import pandageom as pg
 import os
 import numpy as np
 import math
