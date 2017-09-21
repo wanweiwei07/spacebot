@@ -1,6 +1,7 @@
 import os
 
 import numpy as np
+import utils.robotmath as rm
 from panda3d.core import *
 
 import pandactrl.pandageom as pg
@@ -71,7 +72,7 @@ def genmnp(spacebot):
 
     # 0
     shoulderr_model.instanceTo(shoulderr_nodepath)
-    shoulderr_nodepath.setMat(Mat4.identMat())
+    shoulderr_nodepath.setMat(pg.npToMat4(spacebot.ferotmat, npvec3=spacebot.fepos))
     shoulderr_nodepath.setColor(.5,.5,1,1)
     shoulderr_nodepath.reparentTo(spacebotmnp)
     # 1

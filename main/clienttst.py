@@ -97,7 +97,8 @@ if __name__ == '__main__':
     angle = 0
     while True:
         time.sleep(.1)
-        ss.movejnts(np.array([angle,0,angle,0,angle,0,0,0,0,0]))
+        if (angle/20) % 2 == 0:
+            ss.movejnts(np.array([angle,0,angle,0,angle,0,0,0,1]))
+        if (angle/20) % 2 == 1:
+            ss.movejnts(np.array([angle,0,angle,0,angle,0,0,1,0]))
         angle = angle +1
-        if angle > 200:
-            break

@@ -21,6 +21,9 @@ class Spacebot():
         self.__ee = self.__arm[6]
         self.goinitpose()
 
+        self.fepos = np.array([0,0,0])
+        self.ferotmat = np.eye(3)
+
     @property
     def name(self):
         # read-only property
@@ -207,7 +210,14 @@ class Spacebot():
         for i in self.__targetjoints:
             self.arm[i]['rotangle'] = armjnts[counter]
             counter += 1
-        self.__updatefk()
+        if armjnts[-2] == 1 and armjnts[-1] == 1:
+            assert("Wrong Command! Only one of the two ends can be fixed!")
+        if armjnts[-2] == 0 and armjnts[-1] == 0:
+            assert("Wrong Command! Please select a fixed end!")
+        if armjnts[-2] == 1:
+            self.__updatefk()
+        if armjnts[-1] == 1:
+            self.__updatefk_reverse()
 
     def goinitpose(self):
         """
@@ -280,7 +290,7 @@ class Spacebot():
         author: weiwei
         """
 
-        self.arm[0]['rotmat'] = rm.rodrigues(self.arm[0]['rotax'], self.arm[0]['rotangle'])
+        self.arm[0]['rotmat'] = np.dot(self.ferotmat, rm.rodrigues(self.arm[0]['rotax'], self.arm[0]['rotangle']))
         self.arm[0]['linkend'] = np.dot(self.arm[0]['rotmat'], self.arm[0]['linkvec'])+self.arm[0]['linkpos']
         i = 1
         while i != -1:
@@ -289,6 +299,29 @@ class Spacebot():
             self.arm[i]['rotmat'] = np.dot(self.arm[j]['rotmat'], rm.rodrigues(self.arm[i]['rotax'], self.arm[i]['rotangle']))
             self.arm[i]['linkend'] = np.dot(self.arm[i]['rotmat'], self.arm[i]['linkvec']) + self.arm[i]['linkpos']
             i = self.arm[i]['child']
+        return self.arm
+
+    def __updatefk_reverse(self):
+        """
+        Update the structure of arm links and joints
+        Note that this function should not be called explicitly
+        It is automatically invoked by functions like movexxx
+
+        :param armlj: the robot structure
+
+        author: weiwei
+        """
+
+        i = -2
+        while i!=-1:
+            j = self.arm[i]['child']
+            self.arm[i]['rotmat'] = np.dot(self.arm[j]['rotmat'], rm.rodrigues(self.arm[j]['rotax'], -self.arm[j]['rotangle']))
+            self.arm[i]['linkpos'] = self.arm[j]['linkpos']-np.dot(self.arm[i]['rotmat'], self.arm[i]['linkvec'])
+            self.arm[i]['linkend'] = self.arm[j]['linkpos']
+            i = self.arm[i]['mother']
+
+        self.ferotmat = np.dot(self.arm[0]['rotmat'], rm.rodrigues(self.arm[0]['rotax'], -self.arm[0]['rotangle']))
+        self.fepos = self.arm[0]['linkpos'] - np.dot(self.ferotmat, np.array([0, 1145, 0]))
         return self.arm
 
 if __name__=="__main__":
